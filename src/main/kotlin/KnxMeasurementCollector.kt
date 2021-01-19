@@ -1,6 +1,8 @@
 import knx.DPT
 import knx.GroupAddress
 import knx.TwoByteFloatValue
+import knx_sensors.KnxSensor
+import knx_sensors.KnxSensors
 import measurements.Measurement
 import measurements.MeasurementRepository
 import tuwien.auto.calimero.DetachEvent

@@ -1,3 +1,5 @@
+package knx_sensors
+
 import knx.GroupAddress
 import knx.GroupAddresses
 

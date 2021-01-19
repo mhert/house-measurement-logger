@@ -2,7 +2,8 @@ import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
 import heatpump.ModBusBasedHeatPump
 import infrastructure.ArgOrEnvParser
 import inverter.HttpBasedInverter
-import measurements.MeasurementRepository
+import inverter.InverterSensorsFile
+import knx_sensors.KnxSensorsFile
 import measurements.MongoMeasurementRepository
 import measurements.PrintingMeasurementRepository
 import org.litote.kmongo.KMongo
@@ -21,7 +22,8 @@ fun main(args: Array<String>) {
     val knxGatewayPort = argEnvParser.requiredInt("knxGatewayPort", "KNX_GATEWAY_PORT")
     val dbConnectionString = argEnvParser.requiredString("dbConnectionString", "DB_CONNECTION_STRING")
     val dbName = argEnvParser.requiredString("dbName", "DB_NAME")
-    val sensorsDescriptionFile = argEnvParser.requiredString("sensorsDescriptionFile", "SENSORS_DESCRIPTION_FILE")
+    val knxSensorsDescriptionFile = argEnvParser.requiredString("knxSensorsDescriptionFile", "KNX_SENSORS_DESCRIPTION_FILE")
+    val inverterSensorsDescriptionFile = argEnvParser.requiredString("inverterSensorsDescriptionFile", "INVERTER_SENSORS_DESCRIPTION_FILE")
     val inverterBaseUrl = argEnvParser.requiredString("inverterBaseUrl", "INVERTER_BASE_URL")
     val heatPumpHost = argEnvParser.requiredString("heatPumpHost", "HEAT_PUMP_HOST")
 
@@ -36,7 +38,6 @@ fun main(args: Array<String>) {
         val localAddress = InetSocketAddress(0)
         val gatewayAddress = InetSocketAddress(knxGatewayAddress.toString(), knxGatewayPort.toInt())
 
-
         val measurementRepository = if (dryRun) {
             PrintingMeasurementRepository()
         } else {
@@ -47,6 +48,7 @@ fun main(args: Array<String>) {
 
         HttpBasedInverter(inverterBaseUrl.toString()).let { inverter ->
             InverterMeasurementCollector(
+                InverterSensorsFile(inverterSensorsDescriptionFile.toString()),
                 inverter,
                 measurementRepository,
                 Clock.systemDefaultZone()
@@ -92,7 +94,7 @@ fun main(args: Array<String>) {
             ProcessCommunicatorImpl(knxLink).use { processCommunicator ->
                 processCommunicator.addProcessListener(
                     KnxMeasurementCollector(
-                        KnxSensorsFile(sensorsDescriptionFile.toString()),
+                        KnxSensorsFile(knxSensorsDescriptionFile.toString()),
                         measurementRepository,
                         Clock.systemDefaultZone()
                     )
