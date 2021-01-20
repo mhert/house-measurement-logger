@@ -1,6 +1,9 @@
 package modbus
 
+import java.util.*
+
 class ModBusDeviceSensor(
+    val id: UUID,
     val name: String,
     val unit: Int,
     val register: Int,

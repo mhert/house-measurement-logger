@@ -1,6 +1,9 @@
 package inverter
 
+import java.util.*
+
 class InverterSensor(
+    val id: UUID,
     val name: String,
     val datasetFieldName: String,
     val type: Type,

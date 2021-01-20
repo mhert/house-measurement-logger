@@ -33,6 +33,7 @@ class KnxMeasurementCollector(
 
         measurementRepository.addMeasurement(
             Measurement(
+                destinationSensor.id,
                 destinationSensor.name,
                 clock.instant(),
                 value.toDouble()

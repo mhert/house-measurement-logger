@@ -4,12 +4,13 @@ import knx.DPT
 import knx.GroupAddress
 import knx.GroupAddresses
 import java.io.File
+import java.util.*
 
 class KnxSensorsFile(fileName: String) : KnxSensors {
 
     private val sensorsByGroupAddress: Map<GroupAddress, KnxSensor> = File(fileName).readLines().map {
-        val (name, address, typeId) = it.split(";")
-        KnxSensor(name, GroupAddress.fromString(address), DPT.fromTypeId(typeId))
+        val (id, name, address, typeId) = it.split(";")
+        KnxSensor(UUID.fromString(id), name, GroupAddress.fromString(address), DPT.fromTypeId(typeId))
     }.associateBy { it.address }
 
     override fun groupAddresses(): GroupAddresses {

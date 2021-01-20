@@ -19,6 +19,7 @@ class InverterMeasurementCollector(
                 InverterSensor.Type.TYPE_DOUBLE -> {
                     measurementRepository.addMeasurement(
                         Measurement(
+                            sensor.id,
                             sensor.name,
                             clock.instant(),
                             data.getDouble(sensor.datasetFieldName)

@@ -18,6 +18,7 @@ class ModBusDeviceMeasurementCollector constructor(
                     val data = modBusDevice.getDoubleDataForSensor(sensor)
                     measurementRepository.addMeasurement(
                         Measurement(
+                            sensor.id,
                             sensor.name,
                             clock.instant(),
                             data
