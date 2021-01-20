@@ -1,5 +1,6 @@
 import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
-import heatpump.ModBusBasedHeatPump
+import modbus.ModBusDeviceSensorsFile
+import modbus.J2ModModBusDevice
 import infrastructure.ArgOrEnvParser
 import inverter.HttpBasedInverter
 import inverter.InverterSensorsFile
@@ -10,6 +11,7 @@ import org.litote.kmongo.KMongo
 import tuwien.auto.calimero.link.KNXNetworkLinkIP
 import tuwien.auto.calimero.link.medium.TPSettings
 import tuwien.auto.calimero.process.ProcessCommunicatorImpl
+import java.lang.RuntimeException
 import java.net.InetSocketAddress
 import java.time.Clock
 import kotlin.system.exitProcess
@@ -24,13 +26,15 @@ fun main(args: Array<String>) {
     val dbName = argEnvParser.requiredString("dbName", "DB_NAME")
     val knxSensorsDescriptionFile = argEnvParser.requiredString("knxSensorsDescriptionFile", "KNX_SENSORS_DESCRIPTION_FILE")
     val inverterSensorsDescriptionFile = argEnvParser.requiredString("inverterSensorsDescriptionFile", "INVERTER_SENSORS_DESCRIPTION_FILE")
+    val heatPumpSensorsDescriptionFile = argEnvParser.requiredString("heatPumpSensorsDescriptionFile", "HEAT_PUMP_SENSORS_DESCRIPTION_FILE")
     val inverterBaseUrl = argEnvParser.requiredString("inverterBaseUrl", "INVERTER_BASE_URL")
     val heatPumpHost = argEnvParser.requiredString("heatPumpHost", "HEAT_PUMP_HOST")
 
     val inverterPollTimeMs: Long = 30000;
     val heatPumpPollTimeMs: Long = 30000;
+    val knxPollTimeMs: Long = 1000;
 
-    val dryRun = false
+    val dryRun = true
 
     argEnvParser.parse()
 
@@ -66,8 +70,9 @@ fun main(args: Array<String>) {
 
 
         ModbusTCPMaster(heatPumpHost.toString()).let { heatPumpModbus ->
-            ModBusBasedHeatPump(heatPumpModbus).let { heatPump ->
-                HeatPumpMeasurementCollector(
+            J2ModModBusDevice(heatPumpModbus).let { heatPump ->
+                ModBusDeviceMeasurementCollector(
+                    ModBusDeviceSensorsFile(heatPumpSensorsDescriptionFile.toString()),
                     heatPump,
                     measurementRepository,
                     Clock.systemDefaultZone()
@@ -77,6 +82,10 @@ fun main(args: Array<String>) {
                             while (heatPumpModbus.isConnected) {
                                 heatPumpMeasurementCollector.collect()
                                 Thread.sleep(heatPumpPollTimeMs)
+                            }
+
+                            if (!heatPumpModbus.isConnected) {
+                                throw RuntimeException("Lost connection to modbus device $heatPumpHost")
                             }
                         }
                     }.start()
@@ -99,7 +108,13 @@ fun main(args: Array<String>) {
                         Clock.systemDefaultZone()
                     )
                 )
-                while (knxLink.isOpen) Thread.sleep(500)
+                while (knxLink.isOpen) {
+                    Thread.sleep(knxPollTimeMs)
+                }
+
+                if (!knxLink.isOpen) {
+                    throw RuntimeException("Lost connection to knx $knxGatewayAddress")
+                }
             }
         }
     } catch (e: Exception) {
