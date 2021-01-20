@@ -52,7 +52,7 @@ class MongoMeasurementRepository(val db: MongoDatabase) : MeasurementRepository 
             }
 
             encoder.encodeStructure(descriptor) {
-                encodeStringElement(descriptor, 0, value.sensorId.toString())
+                if (encoder.encodeElement(descriptor, 0)) encoder.encodeUUID(value.sensorId)
                 encodeStringElement(descriptor, 1, value.sensorName)
                 if (encoder.encodeElement(descriptor, 2)) encoder.encodeDateTime(value.measurementDate.toEpochMilli())
                 encodeDoubleElement(descriptor, 3, value.value)
