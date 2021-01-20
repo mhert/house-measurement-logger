@@ -34,91 +34,86 @@ fun main(args: Array<String>) {
     val heatPumpPollTimeMs: Long = 30000;
     val knxPollTimeMs: Long = 1000;
 
-    val dryRun = true
+    val dryRun = false
 
     argEnvParser.parse()
 
-    try {
-        val localAddress = InetSocketAddress(0)
-        val gatewayAddress = InetSocketAddress(knxGatewayAddress.toString(), knxGatewayPort.toInt())
+    val localAddress = InetSocketAddress(0)
+    val gatewayAddress = InetSocketAddress(knxGatewayAddress.toString(), knxGatewayPort.toInt())
 
-        val measurementRepository = if (dryRun) {
-            PrintingMeasurementRepository()
-        } else {
-            MongoMeasurementRepository(
-                KMongo.createClient(dbConnectionString.toString()).getDatabase(dbName.toString())
-            )
+    val measurementRepository = if (dryRun) {
+        PrintingMeasurementRepository()
+    } else {
+        MongoMeasurementRepository(
+            KMongo.createClient(dbConnectionString.toString()).getDatabase(dbName.toString())
+        )
+    }
+
+    HttpBasedInverter(inverterBaseUrl.toString()).let { inverter ->
+        InverterMeasurementCollector(
+            InverterSensorsFile(inverterSensorsDescriptionFile.toString()),
+            inverter,
+            measurementRepository,
+            Clock.systemDefaultZone()
+        ).let { inverterMeasurementCollector ->
+            object : Thread() {
+                public override fun run() {
+                    while (true) {
+                        inverterMeasurementCollector.collect()
+                        Thread.sleep(inverterPollTimeMs)
+                    }
+                }
+            }.start()
         }
+    }
 
-        HttpBasedInverter(inverterBaseUrl.toString()).let { inverter ->
-            InverterMeasurementCollector(
-                InverterSensorsFile(inverterSensorsDescriptionFile.toString()),
-                inverter,
+
+    ModbusTCPMaster(heatPumpHost.toString()).let { heatPumpModbus ->
+        J2ModModBusDevice(heatPumpModbus).let { heatPump ->
+            ModBusDeviceMeasurementCollector(
+                ModBusDeviceSensorsFile(heatPumpSensorsDescriptionFile.toString()),
+                heatPump,
                 measurementRepository,
                 Clock.systemDefaultZone()
-            ).let { inverterMeasurementCollector ->
+            ).let { heatPumpMeasurementCollector ->
                 object : Thread() {
-                    public override fun run() {
-                        while (true) {
-                            inverterMeasurementCollector.collect()
-                            Thread.sleep(inverterPollTimeMs)
+                    override fun run() {
+                        while (heatPumpModbus.isConnected) {
+                            heatPumpMeasurementCollector.collect()
+                            Thread.sleep(heatPumpPollTimeMs)
+                        }
+
+                        if (!heatPumpModbus.isConnected) {
+                            throw RuntimeException("Lost connection to modbus device $heatPumpHost")
                         }
                     }
                 }.start()
             }
         }
+    }
 
-
-        ModbusTCPMaster(heatPumpHost.toString()).let { heatPumpModbus ->
-            J2ModModBusDevice(heatPumpModbus).let { heatPump ->
-                ModBusDeviceMeasurementCollector(
-                    ModBusDeviceSensorsFile(heatPumpSensorsDescriptionFile.toString()),
-                    heatPump,
+    // This runs in a thread as well. It is started in AbstractLink:186
+    KNXNetworkLinkIP.newTunnelingLink(
+        localAddress,
+        gatewayAddress,
+        true,
+        TPSettings.TP1
+    ).use { knxLink ->
+        ProcessCommunicatorImpl(knxLink).use { processCommunicator ->
+            processCommunicator.addProcessListener(
+                KnxMeasurementCollector(
+                    KnxSensorsFile(knxSensorsDescriptionFile.toString()),
                     measurementRepository,
                     Clock.systemDefaultZone()
-                ).let { heatPumpMeasurementCollector ->
-                    object : Thread() {
-                        override fun run() {
-                            while (heatPumpModbus.isConnected) {
-                                heatPumpMeasurementCollector.collect()
-                                Thread.sleep(heatPumpPollTimeMs)
-                            }
-
-                            if (!heatPumpModbus.isConnected) {
-                                throw RuntimeException("Lost connection to modbus device $heatPumpHost")
-                            }
-                        }
-                    }.start()
-                }
-            }
-        }
-
-        // This runs in a thread as well. It is started in AbstractLink:186
-        KNXNetworkLinkIP.newTunnelingLink(
-            localAddress,
-            gatewayAddress,
-            true,
-            TPSettings.TP1
-        ).use { knxLink ->
-            ProcessCommunicatorImpl(knxLink).use { processCommunicator ->
-                processCommunicator.addProcessListener(
-                    KnxMeasurementCollector(
-                        KnxSensorsFile(knxSensorsDescriptionFile.toString()),
-                        measurementRepository,
-                        Clock.systemDefaultZone()
-                    )
                 )
-                while (knxLink.isOpen) {
-                    Thread.sleep(knxPollTimeMs)
-                }
+            )
+            while (knxLink.isOpen) {
+                Thread.sleep(knxPollTimeMs)
+            }
 
-                if (!knxLink.isOpen) {
-                    throw RuntimeException("Lost connection to knx $knxGatewayAddress")
-                }
+            if (!knxLink.isOpen) {
+                throw RuntimeException("Lost connection to knx $knxGatewayAddress")
             }
         }
-    } catch (e: Exception) {
-        System.err.println(e)
-        exitProcess(1)
     }
 }
