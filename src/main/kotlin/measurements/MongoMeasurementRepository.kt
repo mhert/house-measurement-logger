@@ -67,8 +67,4 @@ class MongoMeasurementRepository(val db: MongoDatabase) : MeasurementRepository 
     override fun addMeasurement(measurement: Measurement) {
         db.getCollectionOfName<Measurement>("measurements").insertOne(measurement)
     }
-
-    override fun allMeasurements(): MeasurementCollection {
-        TODO("Not yet implemented")
-    }
 }
