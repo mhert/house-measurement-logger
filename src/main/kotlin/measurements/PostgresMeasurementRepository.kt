@@ -11,21 +11,17 @@ class PostgresMeasurementRepository(private val db: Connection) : MeasurementRep
         db.nativeSQL("DISCARD ALL");
     }
 
-    private val insertMeasurementStatement = db.prepareStatement(
-        "INSERT INTO measurements(measurement_id, sensor_id, measurement_date, measurement_value) VALUES (?, ?, ?, ?)"
-    )
-
-    private val findMeasurementStatementById = db.prepareStatement(
-        "SELECT * FROM measurements WHERE measurement_id = ?"
-    )
 
     @Synchronized override fun addMeasurement(measurement: Measurement) {
+        val insertMeasurementStatement = db.prepareStatement(
+            "INSERT INTO measurements(measurement_id, sensor_id, measurement_date, measurement_value) VALUES (?, ?, ?, ?)"
+        )
 
         var measurementId: UUID
 
         do {
              measurementId = UUID.randomUUID()
-        } while (existsMeasurementWithId(measurementId))
+        } while (measurementIdExists(measurementId))
 
         insertMeasurementStatement.setString(1, measurementId.toString())
         insertMeasurementStatement.setString(2, measurement.sensorId.toString())
@@ -34,6 +30,7 @@ class PostgresMeasurementRepository(private val db: Connection) : MeasurementRep
 
         try {
             insertMeasurementStatement.executeUpdate()
+            insertMeasurementStatement.close()
         } catch (e: PGSQLSimpleException) {
             val parts = e.message?.split('"') ?: throw e
             if (parts.size != 3) {
@@ -44,7 +41,10 @@ class PostgresMeasurementRepository(private val db: Connection) : MeasurementRep
         }
     }
 
-    fun existsMeasurementWithId(measurementId: UUID): Boolean {
+    fun measurementIdExists(measurementId: UUID): Boolean {
+        val findMeasurementStatementById = db.prepareStatement(
+            "SELECT * FROM measurements WHERE measurement_id = ?"
+        )
 
         findMeasurementStatementById.setString(1, measurementId.toString())
 
@@ -59,6 +59,9 @@ class PostgresMeasurementRepository(private val db: Connection) : MeasurementRep
             db.nativeSQL("DEALLOCATE " + parts[1])
         }
 
-        return findMeasurementStatementById.resultSet.fetchSize == 0
+        val measurementIdExists = findMeasurementStatementById.resultSet.fetchSize > 0
+        findMeasurementStatementById.close()
+
+        return measurementIdExists
     }
 }
