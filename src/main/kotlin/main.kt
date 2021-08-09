@@ -6,10 +6,8 @@ import infrastructure.ArgOrEnvParser
 import inverter.HttpBasedInverter
 import inverter.InverterSensorsFile
 import knx_sensors.KnxSensorsFile
-import measurements.MongoMeasurementRepository
 import measurements.PostgresMeasurementRepository
 import measurements.PrintingMeasurementRepository
-import org.litote.kmongo.KMongo
 import tuwien.auto.calimero.link.KNXNetworkLinkIP
 import tuwien.auto.calimero.link.medium.TPSettings
 import tuwien.auto.calimero.process.ProcessCommunicatorImpl
@@ -24,8 +22,6 @@ fun main(args: Array<String>) {
     val knxGatewayAddress = argEnvParser.requiredString("knxGatewayAddress", "KNX_GATEWAY_ADDRESS")
     val knxGatewayPort = argEnvParser.requiredInt("knxGatewayPort", "KNX_GATEWAY_PORT")
     val dbType = argEnvParser.requiredString("dbType", "DB_TYPE")
-    val mongoDbConnectionString = argEnvParser.optionalString("mongoDbConnectionString", "MONGO_DB_CONNECTION_STRING", "")
-    val mongoDbName = argEnvParser.optionalString("mongoDbName", "MONGO_DB_NAME", "")
     val postgresqlDbServerName = argEnvParser.optionalString("pgDbHostName", "PG_DB_HOST_NAME", "")
     val postgresqlDbPort = argEnvParser.optionalInt("pgDbPort", "PG_DB_PORT", 5432)
     val postgresqlDbDatabaseName = argEnvParser.optionalString("pgDbDatabaseName", "PG_DB_DATABASE_NAME", "")
@@ -37,9 +33,9 @@ fun main(args: Array<String>) {
     val inverterBaseUrl = argEnvParser.requiredString("inverterBaseUrl", "INVERTER_BASE_URL")
     val heatPumpHost = argEnvParser.requiredString("heatPumpHost", "HEAT_PUMP_HOST")
 
-    val inverterPollTimeMs: Long = 30000;
-    val heatPumpPollTimeMs: Long = 30000;
-    val knxPollTimeMs: Long = 1000;
+    val inverterPollTimeMs: Long = 30000
+    val heatPumpPollTimeMs: Long = 30000
+    val knxPollTimeMs: Long = 1000
 
     argEnvParser.parse()
 
@@ -47,9 +43,6 @@ fun main(args: Array<String>) {
     val gatewayAddress = InetSocketAddress(knxGatewayAddress.toString(), knxGatewayPort.toInt())
 
     val measurementRepository = when (dbType.toString()) {
-        "mongo" -> MongoMeasurementRepository(
-            KMongo.createClient(mongoDbConnectionString.toString()).getDatabase(mongoDbName.toString())
-        )
         "postgres" -> {
             val dataSource = PGDataSource()
             dataSource.serverName = postgresqlDbServerName.toString()
@@ -73,10 +66,10 @@ fun main(args: Array<String>) {
             Clock.systemDefaultZone()
         ).let { inverterMeasurementCollector ->
             object : Thread() {
-                public override fun run() {
+                override fun run() {
                     while (true) {
                         inverterMeasurementCollector.collect()
-                        Thread.sleep(inverterPollTimeMs)
+                        sleep(inverterPollTimeMs)
                     }
                 }
             }.start()
@@ -96,7 +89,7 @@ fun main(args: Array<String>) {
                     override fun run() {
                         while (heatPumpModbus.isConnected) {
                             heatPumpMeasurementCollector.collect()
-                            Thread.sleep(heatPumpPollTimeMs)
+                            sleep(heatPumpPollTimeMs)
                         }
 
                         if (!heatPumpModbus.isConnected) {
