@@ -36,7 +36,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-async:4.2.3")
     implementation("org.litote.kmongo:kmongo-coroutine:4.2.3")
     implementation("org.litote.kmongo:kmongo-serialization:4.2.3")
-    implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.3")
+    implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.9")
     runtimeOnly("org.slf4j:slf4j-simple:1.8.0-beta4")
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
