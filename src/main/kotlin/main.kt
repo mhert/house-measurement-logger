@@ -14,6 +14,7 @@ import tuwien.auto.calimero.process.ProcessCommunicatorImpl
 import java.lang.RuntimeException
 import java.net.InetSocketAddress
 import java.time.Clock
+import kotlin.system.exitProcess
 
 @ExperimentalUnsignedTypes
 fun main(args: Array<String>) {
@@ -41,6 +42,11 @@ fun main(args: Array<String>) {
 
     val localAddress = InetSocketAddress(0)
     val gatewayAddress = InetSocketAddress(knxGatewayAddress.toString(), knxGatewayPort.toInt())
+
+    Thread.setDefaultUncaughtExceptionHandler { _, ex ->
+        println(ex)
+        exitProcess(1)
+    }
 
     val measurementRepository = when (dbType.toString()) {
         "postgres" -> {
