@@ -26,6 +26,7 @@ class KnxMeasurementCollector(
         val destinationSensor = responsibleSensor(destination)
 
         val value = when (destinationSensor.type) {
+            DPT.PERCENT -> TwoByteFloatValue(DPT.PERCENT, ProcessListener.asFloat(e))
             DPT.TEMPERATURE -> TwoByteFloatValue(DPT.TEMPERATURE, ProcessListener.asFloat(e))
             DPT.INTENSITY_OF_LIGHT -> TwoByteFloatValue(DPT.INTENSITY_OF_LIGHT, ProcessListener.asFloat(e))
             DPT.WIND_SPEED -> TwoByteFloatValue(DPT.WIND_SPEED, ProcessListener.asFloat(e))
