@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.10"
-    kotlin("plugin.serialization") version "1.4.10"
+    kotlin("jvm") version "1.4.30"
+    kotlin("plugin.serialization") version "1.4.30"
     application
 }
 
@@ -30,7 +30,9 @@ dependencies {
     implementation("com.github.calimero:calimero-device:2.4")
     implementation("com.github.calimero:calimero-rxtx:2.4")
     implementation("com.ghgande:j2mod:2.7.0")
-    implementation("khttp:khttp:1.0.0")
+    implementation("io.ktor:ktor-client-core:1.6.4")
+    implementation("io.ktor:ktor-client-cio:1.6.4")
+    implementation("io.ktor:ktor-client-serialization:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.9")
     runtimeOnly("org.slf4j:slf4j-simple:1.8.0-beta4")

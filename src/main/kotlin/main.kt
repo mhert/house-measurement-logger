@@ -6,6 +6,10 @@ import infrastructure.ArgOrEnvParser
 import inverter.HttpBasedInverter
 import inverter.InverterSensorsFile
 import knx_sensors.KnxSensorsFile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import measurements.PostgresMeasurementRepository
 import measurements.PrintingMeasurementRepository
 import tuwien.auto.calimero.link.KNXNetworkLinkIP
@@ -71,16 +75,14 @@ fun main(args: Array<String>) {
             measurementRepository,
             Clock.systemDefaultZone()
         ).let { inverterMeasurementCollector ->
-            object : Thread() {
-                override fun run() {
+            CoroutineScope(Dispatchers.IO).launch {
                     while (true) {
                         inverterMeasurementCollector.collect()
-                        sleep(inverterPollTimeMs)
+                        delay(inverterPollTimeMs)
                     }
                 }
-            }.start()
+            }
         }
-    }
 
 
     ModbusTCPMaster(heatPumpHost.toString()).let { heatPumpModbus ->

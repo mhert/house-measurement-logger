@@ -11,7 +11,7 @@ class InverterMeasurementCollector(
     private val measurementRepository: MeasurementRepository,
     private val clock: Clock,
 ) {
-    fun collect() {
+    suspend fun collect() {
         val data = inverter.instantData()
 
         for (sensor in sensors) {

@@ -1,20 +1,31 @@
 package inverter
 
-import khttp.get
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.json.*
+import io.ktor.client.features.json.serializer.*
+import io.ktor.client.request.*
 
 class HttpBasedInverter(private val inverterBaseUrl: String) : Inverter {
-    override fun instantData(): InstantData {
-        val result = get("$inverterBaseUrl/solar_api/v1/GetPowerFlowRealtimeData.fcgi").jsonObject
-            .getJSONObject("Body")
-            .getJSONObject("Data")
-            .getJSONObject("Site")
+    override suspend fun instantData(): InstantData {
+        val client = HttpClient(CIO) {
+            install(JsonFeature) {
+                serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                })
+            }
+        }
 
-        val producedToday: Double = if (!result.isNull("E_Day")) result.getDouble("E_Day") else 0.0
-        val producedYear: Double = if (!result.isNull("E_Year")) result.getDouble("E_Year") else 0.0
-        val producedTotal: Double = if (!result.isNull("E_Total")) result.getDouble("E_Total") else 0.0
-        val pvProduction: Double = if (!result.isNull("P_PV")) result.getDouble("P_PV") else 0.0
-        val gridConsumption: Double = if (!result.isNull("P_Grid")) result.getDouble("P_Grid") else 0.0
-        val totalConsumption: Double = if (!result.isNull("P_Load")) result.getDouble("P_Load") else 0.0
+        val response: HttpBasedInverterResponse = client.get("$inverterBaseUrl/solar_api/v1/GetPowerFlowRealtimeData.fcgi")
+
+        val producedToday: Double = response.Body.Data.Inverters["1"]!!.E_Day;
+        val producedYear: Double = response.Body.Data.Inverters["1"]!!.E_Year;
+        val producedTotal: Double = response.Body.Data.Inverters["1"]!!.E_Total;
+        val pvProduction: Double = response.Body.Data.Site.P_PV
+        val gridConsumption: Double = response.Body.Data.Site.P_Grid
+        val totalConsumption: Double =response.Body.Data.Site.P_Load
 
         return InstantData(
             producedToday,
