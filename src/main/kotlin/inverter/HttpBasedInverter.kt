@@ -20,12 +20,12 @@ class HttpBasedInverter(private val inverterBaseUrl: String) : Inverter {
 
         val response: HttpBasedInverterResponse = client.get("$inverterBaseUrl/solar_api/v1/GetPowerFlowRealtimeData.fcgi")
 
-        val producedToday: Double = response.Body.Data.Inverters["1"]!!.E_Day;
-        val producedYear: Double = response.Body.Data.Inverters["1"]!!.E_Year;
-        val producedTotal: Double = response.Body.Data.Inverters["1"]!!.E_Total;
-        val pvProduction: Double = response.Body.Data.Site.P_PV
-        val gridConsumption: Double = response.Body.Data.Site.P_Grid
-        val totalConsumption: Double =response.Body.Data.Site.P_Load
+        val producedToday: Double = response.Body.Data.Inverters["1"]!!.E_Day  ?: 0.0
+        val producedYear: Double = response.Body.Data.Inverters["1"]!!.E_Year ?: 0.0
+        val producedTotal: Double = response.Body.Data.Inverters["1"]!!.E_Total ?: 0.0
+        val pvProduction: Double = response.Body.Data.Site.P_PV ?: 0.0
+        val gridConsumption: Double = response.Body.Data.Site.P_Grid ?: 0.0
+        val totalConsumption: Double =response.Body.Data.Site.P_Load ?: 0.0
 
         return InstantData(
             producedToday,
