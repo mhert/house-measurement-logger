@@ -1,5 +1,6 @@
 import knx.DPT
 import knx.GroupAddress
+import knx.OneByteIntValue
 import knx.TwoByteFloatValue
 import knx_sensors.KnxSensor
 import knx_sensors.KnxSensors
@@ -25,11 +26,11 @@ class KnxMeasurementCollector(
 
         val destinationSensor = responsibleSensor(destination)
 
-        val value = when (destinationSensor.type) {
-            DPT.PERCENT -> TwoByteFloatValue(DPT.PERCENT, ProcessListener.asFloat(e))
-            DPT.TEMPERATURE -> TwoByteFloatValue(DPT.TEMPERATURE, ProcessListener.asFloat(e))
-            DPT.INTENSITY_OF_LIGHT -> TwoByteFloatValue(DPT.INTENSITY_OF_LIGHT, ProcessListener.asFloat(e))
-            DPT.WIND_SPEED -> TwoByteFloatValue(DPT.WIND_SPEED, ProcessListener.asFloat(e))
+        val value: Double = when (destinationSensor.type) {
+            DPT.PERCENT -> OneByteIntValue(DPT.PERCENT, ProcessListener.asUnsigned(e, "5.001")).value.toDouble()
+            DPT.TEMPERATURE -> TwoByteFloatValue(DPT.TEMPERATURE, ProcessListener.asFloat(e)).value
+            DPT.INTENSITY_OF_LIGHT -> TwoByteFloatValue(DPT.INTENSITY_OF_LIGHT, ProcessListener.asFloat(e)).value
+            DPT.WIND_SPEED -> TwoByteFloatValue(DPT.WIND_SPEED, ProcessListener.asFloat(e)).value
         }
 
         measurementRepository.addMeasurement(
@@ -37,7 +38,7 @@ class KnxMeasurementCollector(
                 destinationSensor.id,
                 destinationSensor.name,
                 clock.instant(),
-                value.toDouble()
+                value
             )
         )
     }
