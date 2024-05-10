@@ -3,7 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.serialization") version "1.9.24"
-    application
+    id("org.springframework.boot") version "3.2.5"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 sourceSets {
@@ -26,6 +27,8 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.github.calimero:calimero-core:2.5.1")
     implementation("com.github.calimero:calimero-device:2.5.1")
     implementation("com.github.calimero:calimero-rxtx:2.5.1")
@@ -36,15 +39,19 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.9")
     runtimeOnly("org.slf4j:slf4j-simple:2.0.13")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xjsr305=strict"
+        jvmTarget = "21"
+    }
 }
 
-kotlin {
-    jvmToolchain(21)
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

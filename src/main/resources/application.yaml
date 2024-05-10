@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: house-measurement-logger
+
+house-measurement-logger:
+  knxGatewayAddress: ${KNX_GATEWAY_ADDRESS}
+  knxGatewayPort: ${KNX_GATEWAY_PORT}
+  dbType: ${DB_TYPE}
+  postgresqlHostName: ${PG_DB_HOST_NAME}
+  postgresqlDbPort: ${PG_DB_PORT}
+  postgresqlDbDatabaseName: ${PG_DB_DATABASE_NAME}
+  postgresqlDbUserName: ${PG_DB_USER_NAME}
+  postgresqlDbPassword: ${PG_DB_PASSWORD}
+  knxSensorsDescriptionFile: ${KNX_SENSORS_DESCRIPTION_FILE}
+  inverterSensorsDescriptionFile: ${INVERTER_SENSORS_DESCRIPTION_FILE}
+  heatPumpSensorsDescriptionFile: ${HEAT_PUMP_SENSORS_DESCRIPTION_FILE}
+  inverterBaseUrl: ${INVERTER_BASE_URL}
+  heatPumpHost: ${HEAT_PUMP_HOST
