@@ -1,5 +1,6 @@
 package knx
 
+import housemeasurementlogger.knx.GroupAddress
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
