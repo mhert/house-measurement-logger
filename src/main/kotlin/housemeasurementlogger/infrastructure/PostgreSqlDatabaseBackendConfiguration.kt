@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Profile
 @Profile("postgresql-backend")
 open class PostgreSqlDatabaseBackendConfiguration {
     @Bean
-    open fun measurementRepositoryDataSource(config: HouseMeasurementLoggerConfigProperties): PGDataSource {
+    open fun measurementRepositoryDataSource(
+        config: HouseMeasurementLoggerConfigProperties
+    ): PGDataSource {
         val dataSource = PGDataSource()
 
         dataSource.serverName = config.postgresqlHostName
@@ -25,8 +27,6 @@ open class PostgreSqlDatabaseBackendConfiguration {
 
     @Bean
     open fun measurementRepository(dataSource: PGDataSource): MeasurementRepository {
-        return PostgresMeasurementRepository(
-            dataSource.connection
-        )
+        return PostgresMeasurementRepository(dataSource.connection)
     }
 }

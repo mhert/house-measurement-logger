@@ -8,14 +8,15 @@ class InstantData(
     gridConsumption: Double,
     totalConsumption: Double
 ) {
-    private val dataDouble = mapOf(
-        "producedToday" to producedToday,
-        "producedYear" to producedYear,
-        "producedTotal" to producedTotal,
-        "pvProduction" to pvProduction,
-        "gridConsumption" to gridConsumption,
-        "totalConsumption" to totalConsumption,
-    )
+    private val dataDouble =
+        mapOf(
+            "producedToday" to producedToday,
+            "producedYear" to producedYear,
+            "producedTotal" to producedTotal,
+            "pvProduction" to pvProduction,
+            "gridConsumption" to gridConsumption,
+            "totalConsumption" to totalConsumption,
+        )
 
     fun getDouble(datasetFieldName: String): Double {
         return this.dataDouble.get(datasetFieldName)!!

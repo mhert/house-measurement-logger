@@ -1,4 +1,3 @@
 package housemeasurementlogger.modbus
 
-interface ModBusDeviceSensors : Collection<ModBusDeviceSensor> {
-}
+interface ModBusDeviceSensors : Collection<ModBusDeviceSensor>

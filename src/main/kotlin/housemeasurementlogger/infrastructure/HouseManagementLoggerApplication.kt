@@ -9,6 +9,9 @@ import housemeasurementlogger.inverter.InverterSensorsFile
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
 import housemeasurementlogger.measurements.MeasurementRepository
 import housemeasurementlogger.modbus.ModBusDeviceSensorsFile
+import java.net.InetSocketAddress
+import java.time.Clock
+import kotlin.system.exitProcess
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,16 +24,10 @@ import org.springframework.context.annotation.Import
 import tuwien.auto.calimero.link.KNXNetworkLinkIP
 import tuwien.auto.calimero.link.medium.TPSettings
 import tuwien.auto.calimero.process.ProcessCommunicatorImpl
-import java.net.InetSocketAddress
-import java.time.Clock
-import kotlin.system.exitProcess
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@Import(
-    DryRunConfiguration::class,
-    PostgreSqlDatabaseBackendConfiguration::class
-)
+@Import(DryRunConfiguration::class, PostgreSqlDatabaseBackendConfiguration::class)
 open class HouseManagementLoggerApplication(
     private var config: HouseMeasurementLoggerConfigProperties,
     private var measurementRepository: MeasurementRepository,
@@ -58,52 +55,52 @@ open class HouseManagementLoggerApplication(
 
         HttpBasedInverter(inverterBaseUrl).let { inverter ->
             InverterMeasurementCollector(
-                InverterSensorsFile(inverterSensorsDescriptionFile),
-                inverter,
-                measurementRepository,
-                Clock.systemDefaultZone()
-            ).let { inverterMeasurementCollector ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    while (true) {
-                        inverterMeasurementCollector.collect()
-                        delay(inverterPollTimeMs)
+                    InverterSensorsFile(inverterSensorsDescriptionFile),
+                    inverter,
+                    measurementRepository,
+                    Clock.systemDefaultZone()
+                )
+                .let { inverterMeasurementCollector ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        while (true) {
+                            inverterMeasurementCollector.collect()
+                            delay(inverterPollTimeMs)
+                        }
                     }
                 }
-            }
         }
-
 
         ModbusTCPMaster(heatPumpHost).let { heatPumpModbus ->
             housemeasurementlogger.modbus.J2ModModBusDevice(heatPumpModbus).let { heatPump ->
                 ModBusDeviceMeasurementCollector(
-                    ModBusDeviceSensorsFile(heatPumpSensorsDescriptionFile),
-                    heatPump,
-                    measurementRepository,
-                    Clock.systemDefaultZone()
-                ).let { heatPumpMeasurementCollector ->
-                    object : Thread() {
-                        override fun run() {
-                            while (heatPumpModbus.isConnected) {
-                                heatPumpMeasurementCollector.collect()
-                                sleep(heatPumpPollTimeMs)
-                            }
+                        ModBusDeviceSensorsFile(heatPumpSensorsDescriptionFile),
+                        heatPump,
+                        measurementRepository,
+                        Clock.systemDefaultZone()
+                    )
+                    .let { heatPumpMeasurementCollector ->
+                        object : Thread() {
+                                override fun run() {
+                                    while (heatPumpModbus.isConnected) {
+                                        heatPumpMeasurementCollector.collect()
+                                        sleep(heatPumpPollTimeMs)
+                                    }
 
-                            if (!heatPumpModbus.isConnected) {
-                                throw RuntimeException("Lost connection to modbus device $heatPumpHost")
+                                    if (!heatPumpModbus.isConnected) {
+                                        throw RuntimeException(
+                                            "Lost connection to modbus device $heatPumpHost"
+                                        )
+                                    }
+                                }
                             }
-                        }
-                    }.start()
-                }
+                            .start()
+                    }
             }
         }
 
         // This runs in a thread as well. It is started in AbstractLink:186
-        KNXNetworkLinkIP.newTunnelingLink(
-            localAddress,
-            gatewayAddress,
-            true,
-            TPSettings.TP1
-        ).use { knxLink ->
+        KNXNetworkLinkIP.newTunnelingLink(localAddress, gatewayAddress, true, TPSettings.TP1).use {
+            knxLink ->
             ProcessCommunicatorImpl(knxLink).use { processCommunicator ->
                 processCommunicator.addProcessListener(
                     KnxMeasurementCollector(

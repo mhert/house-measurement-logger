@@ -1,7 +1,7 @@
 package housemeasurementlogger.knx
 
 class GroupAddresses : Collection<GroupAddress> {
-    private var addresses: Collection<GroupAddress>;
+    private var addresses: Collection<GroupAddress>
 
     constructor() {
         addresses = emptyList()
@@ -29,5 +29,4 @@ class GroupAddresses : Collection<GroupAddress> {
     override fun iterator(): Iterator<GroupAddress> {
         return addresses.iterator()
     }
-
 }

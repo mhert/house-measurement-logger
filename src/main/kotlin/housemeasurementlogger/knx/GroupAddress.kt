@@ -1,12 +1,7 @@
 package housemeasurementlogger.knx
 
-/**
- * 3-level group address
- */
-class GroupAddress
-private constructor(
-    private val groupAddress: Int
-) {
+/** 3-level group address */
+class GroupAddress private constructor(private val groupAddress: Int) {
     companion object {
         fun fromString(groupAddress: String): GroupAddress {
             val (mainGroup, middleGroup, subGroup) = groupAddress.split('/').map { it.toInt() }
@@ -16,15 +11,11 @@ private constructor(
             assertValidSubGroup(subGroup)
             assertGroupAddressNotZero(mainGroup, middleGroup, subGroup)
 
-            return GroupAddress(
-                (mainGroup shl 11) or
-                        (middleGroup shl 8) or
-                        (subGroup)
-            )
+            return GroupAddress((mainGroup shl 11) or (middleGroup shl 8) or (subGroup))
         }
 
         fun fromInt(groupAddress: Int): GroupAddress {
-            return GroupAddress(groupAddress);
+            return GroupAddress(groupAddress)
         }
 
         private fun assertGroupAddressNotZero(mainGroup: Int, middleGroup: Int, subGroup: Int) {
@@ -73,8 +64,7 @@ private constructor(
     }
 
     override fun equals(other: Any?): Boolean {
-        return other is GroupAddress &&
-                this.groupAddress == other.groupAddress
+        return other is GroupAddress && this.groupAddress == other.groupAddress
     }
 
     override fun hashCode(): Int {

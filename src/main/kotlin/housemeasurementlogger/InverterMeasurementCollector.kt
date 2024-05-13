@@ -17,7 +17,7 @@ class InverterMeasurementCollector(
         val data = inverter.instantData()
 
         for (sensor in sensors) {
-            when(sensor.type) {
+            when (sensor.type) {
                 InverterSensor.Type.TYPE_DOUBLE -> {
                     measurementRepository.addMeasurement(
                         Measurement(

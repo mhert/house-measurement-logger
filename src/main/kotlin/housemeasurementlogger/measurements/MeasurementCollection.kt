@@ -1,4 +1,3 @@
 package housemeasurementlogger.measurements
 
-interface MeasurementCollection : Collection<Measurement> {
-}
+interface MeasurementCollection : Collection<Measurement>

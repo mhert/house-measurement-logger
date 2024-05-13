@@ -14,6 +14,7 @@ data class HttpBasedInverterResponse(val Body: BodyObject) {
                 val E_Total: Double?,
                 val E_Year: Double?,
             )
+
             @Serializable
             data class SiteObject(
                 val P_Grid: Double?,

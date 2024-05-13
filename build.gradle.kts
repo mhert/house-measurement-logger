@@ -5,17 +5,13 @@ plugins {
     kotlin("plugin.serialization") version "1.9.24"
     id("org.springframework.boot") version "3.2.5"
     id("io.spring.dependency-management") version "1.1.4"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
-sourceSets {
-    main {
-        dependencies {
-            implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
-        }
-    }
-}
+sourceSets { main { dependencies { implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6") } } }
 
 group = "me.mhert"
+
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -45,6 +41,26 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
 }
 
+spotless {
+    kotlin {
+        target("**/*.kt", "**/*.kts")
+        ktfmt().kotlinlangStyle()
+    }
+
+    yaml {
+        target("**/*.yaml", "**/*.yml")
+        jackson()
+    }
+
+    format("misc") {
+        target("**/*.gitignore", "**/*.properties", "**/*.md", "LICENSE")
+
+        trimTrailingWhitespace()
+        indentWithSpaces(4)
+        endWithNewline()
+    }
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
@@ -52,6 +68,4 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+tasks.withType<Test> { useJUnitPlatform() }

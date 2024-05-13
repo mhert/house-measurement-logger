@@ -1,4 +1,3 @@
 package housemeasurementlogger.inverter
 
-interface InverterSensors : Collection<InverterSensor> {
-}
+interface InverterSensors : Collection<InverterSensor>

@@ -7,7 +7,7 @@ class InverterSensor(
     val name: String,
     val datasetFieldName: String,
     val type: Type,
-)  {
+) {
     enum class Type(val type: String) {
         TYPE_DOUBLE("DOUBLE");
 
