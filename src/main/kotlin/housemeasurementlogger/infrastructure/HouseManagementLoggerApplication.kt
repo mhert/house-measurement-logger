@@ -1,39 +1,40 @@
 package housemeasurementlogger.infrastructure
 
 import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
-import com.impossibl.postgres.jdbc.PGDataSource
 import housemeasurementlogger.InverterMeasurementCollector
 import housemeasurementlogger.KnxMeasurementCollector
 import housemeasurementlogger.ModBusDeviceMeasurementCollector
-import housemeasurementlogger.modbus.ModBusDeviceSensorsFile
 import housemeasurementlogger.inverter.HttpBasedInverter
 import housemeasurementlogger.inverter.InverterSensorsFile
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
+import housemeasurementlogger.measurements.MeasurementRepository
+import housemeasurementlogger.modbus.ModBusDeviceSensorsFile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import housemeasurementlogger.measurements.PostgresMeasurementRepository
-import housemeasurementlogger.measurements.PrintingMeasurementRepository
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.Import
 import tuwien.auto.calimero.link.KNXNetworkLinkIP
 import tuwien.auto.calimero.link.medium.TPSettings
 import tuwien.auto.calimero.process.ProcessCommunicatorImpl
-import java.lang.RuntimeException
 import java.net.InetSocketAddress
 import java.time.Clock
 import kotlin.system.exitProcess
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-open class HouseManagementLoggerApplication : CommandLineRunner {
-    @Autowired
-    private lateinit var config: HouseMeasurementLoggerConfigProperties
-
+@Import(
+    DryRunConfiguration::class,
+    PostgreSqlDatabaseBackendConfiguration::class
+)
+open class HouseManagementLoggerApplication(
+    private var config: HouseMeasurementLoggerConfigProperties,
+    private var measurementRepository: MeasurementRepository,
+) : CommandLineRunner {
     override fun run(vararg args: String?) {
         Thread.setDefaultUncaughtExceptionHandler { _, ex ->
             println(ex)
@@ -42,12 +43,6 @@ open class HouseManagementLoggerApplication : CommandLineRunner {
 
         val knxGatewayAddress = config.knxGatewayAddress
         val knxGatewayPort = config.knxGatewayPort
-        val dbType = config.dbType
-        val postgresqlDbServerName = config.postgresqlHostName
-        val postgresqlDbPort = config.postgresqlDbPort
-        val postgresqlDbDatabaseName = config.postgresqlDbDatabaseName
-        val postgresqlDbUserName = config.postgresqlDbUserName
-        val postgresqlDbPassword = config.postgresqlDbPassword
         val knxSensorsDescriptionFile = config.knxSensorsDescriptionFile
         val inverterSensorsDescriptionFile = config.inverterSensorsDescriptionFile
         val heatPumpSensorsDescriptionFile = config.heatPumpSensorsDescriptionFile
@@ -60,22 +55,6 @@ open class HouseManagementLoggerApplication : CommandLineRunner {
 
         val localAddress = InetSocketAddress(0)
         val gatewayAddress = InetSocketAddress(knxGatewayAddress, knxGatewayPort.toInt())
-
-        val measurementRepository = when (dbType) {
-            "postgres" -> {
-                val dataSource = PGDataSource()
-                dataSource.serverName = postgresqlDbServerName
-                dataSource.port = postgresqlDbPort.toInt()
-                dataSource.databaseName = postgresqlDbDatabaseName
-                dataSource.user = postgresqlDbUserName
-                dataSource.password = postgresqlDbPassword
-                PostgresMeasurementRepository(
-                    dataSource.connection
-                )
-            }
-            "dry-run" -> PrintingMeasurementRepository()
-            else -> throw RuntimeException("Invalid backend-type")
-        }
 
         HttpBasedInverter(inverterBaseUrl).let { inverter ->
             InverterMeasurementCollector(
