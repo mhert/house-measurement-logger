@@ -1,6 +1,5 @@
 package housemeasurementlogger.infrastructure
 
-import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
 import housemeasurementlogger.InverterMeasurementCollector
 import housemeasurementlogger.KnxMeasurementCollector
 import housemeasurementlogger.ModBusDeviceMeasurementCollector
@@ -9,14 +8,10 @@ import housemeasurementlogger.infrastructure.configuration.HouseMeasurementLogge
 import housemeasurementlogger.infrastructure.configuration.PostgreSqlDatabaseBackendConfiguration
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
 import housemeasurementlogger.measurements.MeasurementRepository
-import housemeasurementlogger.modbus.FileBasedModBusSensorsRepository
 import java.net.InetSocketAddress
 import java.time.Clock
 import kotlin.system.exitProcess
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
@@ -33,6 +28,7 @@ open class HouseManagementLoggerApplication(
     private var config: HouseMeasurementLoggerConfigProperties,
     private var measurementRepository: MeasurementRepository,
     private var inverterMeasurementCollector: InverterMeasurementCollector,
+    private var heatPumpMeasurementCollector: ModBusDeviceMeasurementCollector,
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
         Thread.setDefaultUncaughtExceptionHandler { _, ex ->
@@ -43,8 +39,6 @@ open class HouseManagementLoggerApplication(
         val knxGatewayAddress = config.knxGatewayAddress
         val knxGatewayPort = config.knxGatewayPort
         val knxSensorsDescriptionFile = config.knxSensorsDescriptionFile
-        val heatPumpSensorsDescriptionFile = config.heatPumpSensorsDescriptionFile
-        val heatPumpHost = config.heatPumpHost
 
         val inverterPollTimeMs: Long = 30000
         val heatPumpPollTimeMs: Long = 30000
@@ -54,33 +48,16 @@ open class HouseManagementLoggerApplication(
         val gatewayAddress = InetSocketAddress(knxGatewayAddress, knxGatewayPort.toInt())
 
         CoroutineScope(Dispatchers.IO).launch {
-            while (true) {
+            while (isActive) {
                 inverterMeasurementCollector.collect()
                 delay(inverterPollTimeMs)
             }
         }
 
-        val heatPumpSensorsRepository = FileBasedModBusSensorsRepository(heatPumpSensorsDescriptionFile)
-
-        ModbusTCPMaster(heatPumpHost).let { heatPumpModbus ->
-            housemeasurementlogger.modbus.J2ModModBusDevice(heatPumpModbus).let { heatPump ->
-                ModBusDeviceMeasurementCollector(
-                        heatPumpSensorsRepository,
-                        heatPump,
-                        measurementRepository,
-                        Clock.systemDefaultZone()
-                    )
-                    .let { heatPumpMeasurementCollector ->
-                        object : Thread() {
-                                override fun run() {
-                                    while (heatPumpModbus.isConnected) {
-                                        heatPumpMeasurementCollector.collect()
-                                        sleep(heatPumpPollTimeMs)
-                                    }
-                                }
-                            }
-                            .start()
-                    }
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                heatPumpMeasurementCollector.collect()
+                delay(heatPumpPollTimeMs)
             }
         }
 

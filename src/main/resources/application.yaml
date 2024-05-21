@@ -15,4 +15,4 @@ house-measurement-logger:
   inverterSensorsDescriptionFile: "${INVERTER_SENSORS_DESCRIPTION_FILE}"
   heatPumpSensorsDescriptionFile: "${HEAT_PUMP_SENSORS_DESCRIPTION_FILE}"
   inverterBaseUrl: "${INVERTER_BASE_URL}"
-  heatPumpHost: "${HEAT_PUMP_HOST"
+  heatPumpHost: "${HEAT_PUMP_HOST}"
