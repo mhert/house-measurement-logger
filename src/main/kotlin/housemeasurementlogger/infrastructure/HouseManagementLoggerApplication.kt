@@ -4,8 +4,8 @@ import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
 import housemeasurementlogger.InverterMeasurementCollector
 import housemeasurementlogger.KnxMeasurementCollector
 import housemeasurementlogger.ModBusDeviceMeasurementCollector
+import housemeasurementlogger.inverter.FileBasedInverterSensorsRepository
 import housemeasurementlogger.inverter.HttpBasedInverter
-import housemeasurementlogger.inverter.InverterSensorsFile
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
 import housemeasurementlogger.measurements.MeasurementRepository
 import housemeasurementlogger.modbus.ModBusDeviceSensorsFile
@@ -53,9 +53,12 @@ open class HouseManagementLoggerApplication(
         val localAddress = InetSocketAddress(0)
         val gatewayAddress = InetSocketAddress(knxGatewayAddress, knxGatewayPort.toInt())
 
+        val fileBasedInverterSensorsRepository =
+            FileBasedInverterSensorsRepository(inverterSensorsDescriptionFile)
+
         HttpBasedInverter(inverterBaseUrl).let { inverter ->
             InverterMeasurementCollector(
-                    InverterSensorsFile(inverterSensorsDescriptionFile),
+                    fileBasedInverterSensorsRepository,
                     inverter,
                     measurementRepository,
                     Clock.systemDefaultZone()
