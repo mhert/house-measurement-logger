@@ -1,4 +1,4 @@
-package housemeasurementlogger.infrastructure
+package housemeasurementlogger.infrastructure.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties

@@ -4,8 +4,9 @@ import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
 import housemeasurementlogger.InverterMeasurementCollector
 import housemeasurementlogger.KnxMeasurementCollector
 import housemeasurementlogger.ModBusDeviceMeasurementCollector
-import housemeasurementlogger.inverter.FileBasedInverterSensorsRepository
-import housemeasurementlogger.inverter.HttpBasedInverter
+import housemeasurementlogger.infrastructure.configuration.DryRunConfiguration
+import housemeasurementlogger.infrastructure.configuration.HouseMeasurementLoggerConfigProperties
+import housemeasurementlogger.infrastructure.configuration.PostgreSqlDatabaseBackendConfiguration
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
 import housemeasurementlogger.measurements.MeasurementRepository
 import housemeasurementlogger.modbus.ModBusDeviceSensorsFile
@@ -31,6 +32,7 @@ import tuwien.auto.calimero.process.ProcessCommunicatorImpl
 open class HouseManagementLoggerApplication(
     private var config: HouseMeasurementLoggerConfigProperties,
     private var measurementRepository: MeasurementRepository,
+    private var inverterMeasurementCollector: InverterMeasurementCollector,
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
         Thread.setDefaultUncaughtExceptionHandler { _, ex ->
@@ -41,9 +43,7 @@ open class HouseManagementLoggerApplication(
         val knxGatewayAddress = config.knxGatewayAddress
         val knxGatewayPort = config.knxGatewayPort
         val knxSensorsDescriptionFile = config.knxSensorsDescriptionFile
-        val inverterSensorsDescriptionFile = config.inverterSensorsDescriptionFile
         val heatPumpSensorsDescriptionFile = config.heatPumpSensorsDescriptionFile
-        val inverterBaseUrl = config.inverterBaseUrl
         val heatPumpHost = config.heatPumpHost
 
         val inverterPollTimeMs: Long = 30000
@@ -53,24 +53,11 @@ open class HouseManagementLoggerApplication(
         val localAddress = InetSocketAddress(0)
         val gatewayAddress = InetSocketAddress(knxGatewayAddress, knxGatewayPort.toInt())
 
-        val fileBasedInverterSensorsRepository =
-            FileBasedInverterSensorsRepository(inverterSensorsDescriptionFile)
-
-        HttpBasedInverter(inverterBaseUrl).let { inverter ->
-            InverterMeasurementCollector(
-                    fileBasedInverterSensorsRepository,
-                    inverter,
-                    measurementRepository,
-                    Clock.systemDefaultZone()
-                )
-                .let { inverterMeasurementCollector ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        while (true) {
-                            inverterMeasurementCollector.collect()
-                            delay(inverterPollTimeMs)
-                        }
-                    }
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            while (true) {
+                inverterMeasurementCollector.collect()
+                delay(inverterPollTimeMs)
+            }
         }
 
         ModbusTCPMaster(heatPumpHost).let { heatPumpModbus ->

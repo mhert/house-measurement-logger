@@ -1,4 +1,4 @@
-package housemeasurementlogger.infrastructure
+package housemeasurementlogger.infrastructure.configuration
 
 import housemeasurementlogger.measurements.MeasurementRepository
 import housemeasurementlogger.measurements.PrintingMeasurementRepository

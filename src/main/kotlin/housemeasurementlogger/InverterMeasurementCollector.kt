@@ -1,6 +1,6 @@
 package housemeasurementlogger
 
-import housemeasurementlogger.inverter.HttpBasedInverter
+import housemeasurementlogger.inverter.Inverter
 import housemeasurementlogger.inverter.InverterSensor
 import housemeasurementlogger.inverter.InverterSensorsRepository
 import housemeasurementlogger.measurements.Measurement
@@ -9,7 +9,7 @@ import java.time.Clock
 
 class InverterMeasurementCollector(
     private val inverterSensorsRepository: InverterSensorsRepository,
-    private val inverter: HttpBasedInverter,
+    private val inverter: Inverter,
     private val measurementRepository: MeasurementRepository,
     private val clock: Clock,
 ) {

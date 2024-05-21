@@ -1,4 +1,4 @@
-package housemeasurementlogger.infrastructure
+package housemeasurementlogger.infrastructure.configuration
 
 import com.impossibl.postgres.jdbc.PGDataSource
 import housemeasurementlogger.measurements.MeasurementRepository
