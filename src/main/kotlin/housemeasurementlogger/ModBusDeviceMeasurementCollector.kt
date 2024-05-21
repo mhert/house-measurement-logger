@@ -4,16 +4,18 @@ import housemeasurementlogger.measurements.Measurement
 import housemeasurementlogger.measurements.MeasurementRepository
 import housemeasurementlogger.modbus.ModBusDevice
 import housemeasurementlogger.modbus.ModBusDeviceSensor
-import housemeasurementlogger.modbus.ModBusDeviceSensors
+import housemeasurementlogger.modbus.ModBusSensorsRepository
 import java.time.Clock
 
 class ModBusDeviceMeasurementCollector(
-    private val sensors: ModBusDeviceSensors,
+    private val modBusSensorsRepository: ModBusSensorsRepository,
     private val modBusDevice: ModBusDevice,
     private val measurementRepository: MeasurementRepository,
     private val clock: Clock
 ) {
     fun collect() {
+        val sensors = modBusSensorsRepository.allSensors()
+
         for (sensor in sensors) {
             when (sensor.type) {
                 ModBusDeviceSensor.Type.TYPE_DOUBLE -> {

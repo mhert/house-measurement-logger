@@ -9,7 +9,7 @@ import housemeasurementlogger.infrastructure.configuration.HouseMeasurementLogge
 import housemeasurementlogger.infrastructure.configuration.PostgreSqlDatabaseBackendConfiguration
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
 import housemeasurementlogger.measurements.MeasurementRepository
-import housemeasurementlogger.modbus.ModBusDeviceSensorsFile
+import housemeasurementlogger.modbus.FileBasedModBusSensorsRepository
 import java.net.InetSocketAddress
 import java.time.Clock
 import kotlin.system.exitProcess
@@ -60,10 +60,12 @@ open class HouseManagementLoggerApplication(
             }
         }
 
+        val heatPumpSensorsRepository = FileBasedModBusSensorsRepository(heatPumpSensorsDescriptionFile)
+
         ModbusTCPMaster(heatPumpHost).let { heatPumpModbus ->
             housemeasurementlogger.modbus.J2ModModBusDevice(heatPumpModbus).let { heatPump ->
                 ModBusDeviceMeasurementCollector(
-                        ModBusDeviceSensorsFile(heatPumpSensorsDescriptionFile),
+                        heatPumpSensorsRepository,
                         heatPump,
                         measurementRepository,
                         Clock.systemDefaultZone()
