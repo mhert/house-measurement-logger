@@ -5,7 +5,7 @@ import housemeasurementlogger.knx.GroupAddress
 import housemeasurementlogger.knx.OneByteIntValue
 import housemeasurementlogger.knx.TwoByteFloatValue
 import housemeasurementlogger.knx_sensors.KnxSensor
-import housemeasurementlogger.knx_sensors.KnxSensors
+import housemeasurementlogger.knx_sensors.KnxSensorsRepository
 import housemeasurementlogger.measurements.Measurement
 import housemeasurementlogger.measurements.MeasurementRepository
 import io.calimero.DetachEvent
@@ -14,7 +14,7 @@ import io.calimero.process.ProcessListener
 import java.time.Clock
 
 class KnxMeasurementCollector(
-    private val sensors: KnxSensors,
+    private val knxSensorsRepository: KnxSensorsRepository,
     private val measurementRepository: MeasurementRepository,
     private val clock: Clock,
 ) : ProcessListener {
@@ -27,6 +27,10 @@ class KnxMeasurementCollector(
         }
 
         val destinationSensor = responsibleSensor(destination)
+
+        if (destinationSensor === null) {
+            return
+        }
 
         val value: Double =
             when (destinationSensor.type) {
@@ -48,11 +52,16 @@ class KnxMeasurementCollector(
     }
 
     private fun isThisListenerResponsible(destination: GroupAddress): Boolean {
-        return sensors.groupAddresses().contains(destination)
+        val sensors = knxSensorsRepository.allSensors()
+        val groupAddressesForSensors = sensors.map { it.address }
+
+        return groupAddressesForSensors.contains(destination)
     }
 
-    private fun responsibleSensor(destination: GroupAddress): KnxSensor {
-        return sensors.sensorForGroupAddress(destination)
+    private fun responsibleSensor(destination: GroupAddress): KnxSensor? {
+        val sensors = knxSensorsRepository.allSensors()
+
+        return sensors.find { it.address == destination }
     }
 
     override fun groupReadRequest(e: ProcessEvent?) {}

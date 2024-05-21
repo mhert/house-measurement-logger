@@ -61,13 +61,15 @@ open class HouseManagementLoggerApplication(
             }
         }
 
+        val knxSensorsRepository = FileBasedKnxSensorsRepository(knxSensorsDescriptionFile)
+
         // This runs in a thread as well. It is started in AbstractLink:186
         KNXNetworkLinkIP.newTunnelingLink(localAddress, gatewayAddress, true, TPSettings()).use {
             knxLink ->
             ProcessCommunicatorImpl(knxLink).use { processCommunicator ->
                 processCommunicator.addProcessListener(
                     KnxMeasurementCollector(
-                        KnxSensorsFile(knxSensorsDescriptionFile),
+                        knxSensorsRepository,
                         measurementRepository,
                         Clock.systemDefaultZone()
                     )
