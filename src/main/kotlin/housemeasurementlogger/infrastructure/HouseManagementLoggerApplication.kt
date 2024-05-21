@@ -77,12 +77,6 @@ open class HouseManagementLoggerApplication(
                                         heatPumpMeasurementCollector.collect()
                                         sleep(heatPumpPollTimeMs)
                                     }
-
-                                    if (!heatPumpModbus.isConnected) {
-                                        throw RuntimeException(
-                                            "Lost connection to modbus device $heatPumpHost"
-                                        )
-                                    }
                                 }
                             }
                             .start()
