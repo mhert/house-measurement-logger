@@ -19,21 +19,24 @@ repositories {
     jcenter()
 
     maven(url = "https://oss.sonatype.org/content/repositories/snapshots")
+    maven(url = "https://s01.oss.sonatype.org/content/repositories/snapshots")
     maven(url = "https://kotlin.bintray.com/kotlinx")
 }
+
+val calimeroVersion = "3.0-SNAPSHOT"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("com.github.calimero:calimero-core:2.5.1")
-    implementation("com.github.calimero:calimero-device:2.5.1")
-    implementation("com.github.calimero:calimero-rxtx:2.5.1")
+    implementation("io.calimero:calimero-core:${calimeroVersion}")
+    implementation("io.calimero:calimero-device:${calimeroVersion}")
     implementation("com.ghgande:j2mod:3.2.1")
     implementation("io.ktor:ktor-client-core:1.6.4")
     implementation("io.ktor:ktor-client-cio:1.6.4")
     implementation("io.ktor:ktor-client-serialization:1.6.4")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.9")
+    runtimeOnly("io.calimero:calimero-rxtx:${calimeroVersion}")
     runtimeOnly("org.slf4j:slf4j-simple:2.0.13")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(kotlin("test-junit5"))

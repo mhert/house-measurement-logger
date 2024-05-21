@@ -8,10 +8,10 @@ import housemeasurementlogger.knx_sensors.KnxSensor
 import housemeasurementlogger.knx_sensors.KnxSensors
 import housemeasurementlogger.measurements.Measurement
 import housemeasurementlogger.measurements.MeasurementRepository
+import io.calimero.DetachEvent
+import io.calimero.process.ProcessEvent
+import io.calimero.process.ProcessListener
 import java.time.Clock
-import tuwien.auto.calimero.DetachEvent
-import tuwien.auto.calimero.process.ProcessEvent
-import tuwien.auto.calimero.process.ProcessListener
 
 class KnxMeasurementCollector(
     private val sensors: KnxSensors,

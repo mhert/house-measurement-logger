@@ -8,6 +8,9 @@ import housemeasurementlogger.infrastructure.configuration.HouseMeasurementLogge
 import housemeasurementlogger.infrastructure.configuration.PostgreSqlDatabaseBackendConfiguration
 import housemeasurementlogger.knx_sensors.KnxSensorsFile
 import housemeasurementlogger.measurements.MeasurementRepository
+import io.calimero.link.KNXNetworkLinkIP
+import io.calimero.link.medium.TPSettings
+import io.calimero.process.ProcessCommunicatorImpl
 import java.net.InetSocketAddress
 import java.time.Clock
 import kotlin.system.exitProcess
@@ -17,9 +20,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Import
-import tuwien.auto.calimero.link.KNXNetworkLinkIP
-import tuwien.auto.calimero.link.medium.TPSettings
-import tuwien.auto.calimero.process.ProcessCommunicatorImpl
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
@@ -62,7 +62,7 @@ open class HouseManagementLoggerApplication(
         }
 
         // This runs in a thread as well. It is started in AbstractLink:186
-        KNXNetworkLinkIP.newTunnelingLink(localAddress, gatewayAddress, true, TPSettings.TP1).use {
+        KNXNetworkLinkIP.newTunnelingLink(localAddress, gatewayAddress, true, TPSettings()).use {
             knxLink ->
             ProcessCommunicatorImpl(knxLink).use { processCommunicator ->
                 processCommunicator.addProcessListener(
