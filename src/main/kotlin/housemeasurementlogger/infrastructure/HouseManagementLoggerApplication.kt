@@ -3,8 +3,6 @@ package housemeasurementlogger.infrastructure
 import housemeasurementlogger.InverterMeasurementCollector
 import housemeasurementlogger.KnxMeasurementCollector
 import housemeasurementlogger.ModBusDeviceMeasurementCollector
-import housemeasurementlogger.infrastructure.configuration.DryRunConfiguration
-import housemeasurementlogger.infrastructure.configuration.PostgreSqlDatabaseBackendConfiguration
 import io.calimero.link.KNXNetworkLinkIP
 import io.calimero.process.ProcessCommunicatorImpl
 import kotlin.system.exitProcess
@@ -13,11 +11,9 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Import
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
-@Import(DryRunConfiguration::class, PostgreSqlDatabaseBackendConfiguration::class)
 open class HouseManagementLoggerApplication(
     private var inverterMeasurementCollector: InverterMeasurementCollector,
     private var heatPumpMeasurementCollector: ModBusDeviceMeasurementCollector,

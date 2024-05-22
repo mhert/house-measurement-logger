@@ -37,7 +37,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("com.impossibl.pgjdbc-ng", "pgjdbc-ng", "0.8.9")
     runtimeOnly("io.calimero:calimero-rxtx:${calimeroVersion}")
-    runtimeOnly("org.slf4j:slf4j-simple:2.0.13")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
