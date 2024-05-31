@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val calimero = "3.0-SNAPSHOT"
 val j2mod = "3.2.1"
 val junitJupiter = "5.6.0"
+val kotlinxCoroutinesReactor = "1.8.1"
 val kotlinxSerializationJson = "1.0.1"
 val ktor = "1.6.4"
 val pgjdbcNg = "0.8.9"
@@ -24,6 +25,7 @@ dependencies {
     implementation("io.ktor", "ktor-client-core", ktor)
     implementation("io.ktor", "ktor-client-serialization", ktor)
     implementation("org.jetbrains.kotlin", "kotlin-reflect")
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-reactor", kotlinxCoroutinesReactor)
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", kotlinxSerializationJson)
     implementation("org.springframework.boot", "spring-boot-starter")
     runtimeOnly("io.calimero", "calimero-rxtx", calimero)
