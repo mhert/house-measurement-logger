@@ -28,6 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-reactor", kotlinxCoroutinesReactor)
     implementation("org.jetbrains.kotlinx", "kotlinx-serialization-json", kotlinxSerializationJson)
     implementation("org.springframework.boot", "spring-boot-starter")
+    implementation("org.springframework.boot", "spring-boot-starter-actuator")
+    implementation("org.springframework.boot", "spring-boot-starter-web")
     runtimeOnly("io.calimero", "calimero-rxtx", calimero)
     testImplementation("org.junit.jupiter", "junit-jupiter-api", junitJupiter)
     testImplementation("org.springframework.boot", "spring-boot-starter-test")
