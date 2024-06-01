@@ -10,7 +10,7 @@ val pgjdbcNg = "0.8.9"
 plugins {
     id("com.diffplug.spotless") version "6.25.0"
     id("io.spring.dependency-management") version "1.1.4"
-    id("org.springframework.boot") version "3.2.5"
+    id("org.springframework.boot") version "3.3.0"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.serialization") version "1.9.24"
 }
