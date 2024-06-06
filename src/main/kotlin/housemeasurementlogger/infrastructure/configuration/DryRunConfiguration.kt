@@ -1,7 +1,7 @@
 package housemeasurementlogger.infrastructure.configuration
 
+import housemeasurementlogger.measurements.DryRunMeasurementRepository
 import housemeasurementlogger.measurements.MeasurementRepository
-import housemeasurementlogger.measurements.PrintingMeasurementRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -11,6 +11,6 @@ import org.springframework.context.annotation.Profile
 class DryRunConfiguration {
     @Bean
     fun measurementRepository(): MeasurementRepository {
-        return PrintingMeasurementRepository()
+        return DryRunMeasurementRepository()
     }
 }
