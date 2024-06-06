@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class KnxConfiguration {
+class KnxConfiguration {
     @Bean
-    open fun knxLink(
+    fun knxLink(
         config: HouseMeasurementLoggerConfigProperties,
     ): KNXNetworkLinkIP {
         val localAddress = InetSocketAddress(0)
@@ -26,7 +26,7 @@ open class KnxConfiguration {
     }
 
     @Bean
-    open fun knxMeasurementCollector(
+    fun knxMeasurementCollector(
         knxSensorsRepository: KnxSensorsRepository,
         inverter: Inverter,
         measurementRepository: MeasurementRepository,
@@ -36,7 +36,7 @@ open class KnxConfiguration {
     }
 
     @Bean
-    open fun knxSensorsRepository(
+    fun knxSensorsRepository(
         config: HouseMeasurementLoggerConfigProperties,
     ): KnxSensorsRepository {
         return FileBasedKnxSensorsRepository(config.knxSensorsDescriptionFile)

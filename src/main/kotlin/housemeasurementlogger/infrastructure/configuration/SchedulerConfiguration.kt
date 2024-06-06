@@ -7,11 +7,11 @@ import org.springframework.scheduling.TaskScheduler
 import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler
 
 @Configuration
-open class SchedulerConfiguration(
+class SchedulerConfiguration(
     private val errorHandler: TasksErrorHandler,
 ) {
     @Bean
-    open fun taskScheduler(): TaskScheduler {
+    fun taskScheduler(): TaskScheduler {
         val taskScheduler = SimpleAsyncTaskScheduler()
         // TODO: here we could set the errorHandler, if it would be supported by
         // SimpleAsyncTaskScheduler

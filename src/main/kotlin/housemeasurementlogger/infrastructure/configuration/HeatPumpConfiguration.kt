@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class HeatPumpConfiguration {
+class HeatPumpConfiguration {
     @Bean
-    open fun heatPumpMeasurementCollector(
+    fun heatPumpMeasurementCollector(
         heatPumpSensorsRepository: ModBusSensorsRepository,
         heatPump: ModBusDevice,
         measurementRepository: MeasurementRepository,
@@ -29,14 +29,14 @@ open class HeatPumpConfiguration {
     }
 
     @Bean
-    open fun heatPumpSensorsRepository(
+    fun heatPumpSensorsRepository(
         config: HouseMeasurementLoggerConfigProperties,
     ): ModBusSensorsRepository {
         return FileBasedModBusSensorsRepository(config.heatPumpSensorsDescriptionFile)
     }
 
     @Bean
-    open fun heatPump(
+    fun heatPump(
         config: HouseMeasurementLoggerConfigProperties,
     ): ModBusDevice {
         return J2ModModBusDevice(ModbusTCPMaster(config.heatPumpHost))

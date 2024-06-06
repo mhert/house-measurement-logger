@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class InverterConfiguration {
+class InverterConfiguration {
     @Bean
-    open fun inverterMeasurementCollector(
+    fun inverterMeasurementCollector(
         inverterSensorsRepository: InverterSensorsRepository,
         inverter: Inverter,
         measurementRepository: MeasurementRepository,
@@ -28,14 +28,14 @@ open class InverterConfiguration {
     }
 
     @Bean
-    open fun inverterSensorsRepository(
+    fun inverterSensorsRepository(
         config: HouseMeasurementLoggerConfigProperties,
     ): InverterSensorsRepository {
         return FileBasedInverterSensorsRepository(config.inverterSensorsDescriptionFile)
     }
 
     @Bean
-    open fun inverter(
+    fun inverter(
         config: HouseMeasurementLoggerConfigProperties,
     ): Inverter {
         return HttpBasedInverter(config.inverterBaseUrl)

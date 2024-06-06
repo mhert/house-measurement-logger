@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableScheduling
-open class HouseMeasurementLoggerApplication
+class HouseMeasurementLoggerApplication
 
 @ExperimentalUnsignedTypes
 fun main(args: Array<String>) {

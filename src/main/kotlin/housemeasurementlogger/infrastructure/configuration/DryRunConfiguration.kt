@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Profile
 
 @Configuration
 @Profile("dry-run")
-open class DryRunConfiguration {
+class DryRunConfiguration {
     @Bean
-    open fun measurementRepository(): MeasurementRepository {
+    fun measurementRepository(): MeasurementRepository {
         return PrintingMeasurementRepository()
     }
 }

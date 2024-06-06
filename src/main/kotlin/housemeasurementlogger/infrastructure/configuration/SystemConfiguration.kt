@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class SystemConfiguration {
+class SystemConfiguration {
     @Bean
-    open fun clock(): Clock {
+    fun clock(): Clock {
         return Clock.systemDefaultZone()
     }
 }

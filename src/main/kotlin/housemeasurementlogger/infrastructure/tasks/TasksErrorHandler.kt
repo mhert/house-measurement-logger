@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import org.springframework.util.ErrorHandler
 
 @Component
-open class TasksErrorHandler(
+class TasksErrorHandler(
     private val context: ApplicationContext,
 ) : ErrorHandler {
     override fun handleError(t: Throwable) {
