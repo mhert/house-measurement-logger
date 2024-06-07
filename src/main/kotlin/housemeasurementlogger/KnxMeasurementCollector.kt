@@ -6,16 +6,16 @@ import housemeasurementlogger.knx.OneByteIntValue
 import housemeasurementlogger.knx.TwoByteFloatValue
 import housemeasurementlogger.knx_sensors.KnxSensor
 import housemeasurementlogger.knx_sensors.KnxSensorsRepository
-import housemeasurementlogger.measurements.Measurement
-import housemeasurementlogger.measurements.MeasurementRepository
+import housemeasurementlogger.measurements.NewIncomingMeasurement
 import io.calimero.DetachEvent
 import io.calimero.process.ProcessEvent
 import io.calimero.process.ProcessListener
 import java.time.Clock
+import org.springframework.context.ApplicationEventPublisher
 
 class KnxMeasurementCollector(
     private val knxSensorsRepository: KnxSensorsRepository,
-    private val measurementRepository: MeasurementRepository,
+    private val eventPublisher: ApplicationEventPublisher,
     private val clock: Clock,
 ) : ProcessListener {
 
@@ -46,8 +46,13 @@ class KnxMeasurementCollector(
                     TwoByteFloatValue(DPT.WIND_SPEED, ProcessListener.asFloat(e)).value
             }
 
-        measurementRepository.addMeasurement(
-            Measurement(destinationSensor.id, destinationSensor.name, clock.instant(), value)
+        eventPublisher.publishEvent(
+            NewIncomingMeasurement(
+                destinationSensor.id,
+                destinationSensor.name,
+                clock.instant(),
+                value
+            )
         )
     }
 

@@ -1,16 +1,16 @@
 package housemeasurementlogger
 
-import housemeasurementlogger.measurements.Measurement
-import housemeasurementlogger.measurements.MeasurementRepository
+import housemeasurementlogger.measurements.NewIncomingMeasurement
 import housemeasurementlogger.modbus.ModBusDevice
 import housemeasurementlogger.modbus.ModBusDeviceSensor
 import housemeasurementlogger.modbus.ModBusSensorsRepository
 import java.time.Clock
+import org.springframework.context.ApplicationEventPublisher
 
 class ModBusDeviceMeasurementCollector(
     private val modBusSensorsRepository: ModBusSensorsRepository,
     private val modBusDevice: ModBusDevice,
-    private val measurementRepository: MeasurementRepository,
+    private val eventPublisher: ApplicationEventPublisher,
     private val clock: Clock
 ) {
     fun collect() {
@@ -20,8 +20,9 @@ class ModBusDeviceMeasurementCollector(
             when (sensor.type) {
                 ModBusDeviceSensor.Type.TYPE_DOUBLE -> {
                     val data = modBusDevice.getDoubleDataForSensor(sensor)
-                    measurementRepository.addMeasurement(
-                        Measurement(sensor.id, sensor.name, clock.instant(), data)
+
+                    eventPublisher.publishEvent(
+                        NewIncomingMeasurement(sensor.id, sensor.name, clock.instant(), data)
                     )
                 }
             }

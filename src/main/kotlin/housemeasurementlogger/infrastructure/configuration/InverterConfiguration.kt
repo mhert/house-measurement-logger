@@ -1,31 +1,14 @@
 package housemeasurementlogger.infrastructure.configuration
 
-import housemeasurementlogger.InverterMeasurementCollector
 import housemeasurementlogger.inverter.FileBasedInverterSensorsRepository
 import housemeasurementlogger.inverter.HttpBasedInverter
 import housemeasurementlogger.inverter.Inverter
 import housemeasurementlogger.inverter.InverterSensorsRepository
-import housemeasurementlogger.measurements.MeasurementRepository
-import java.time.Clock
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class InverterConfiguration {
-    @Bean
-    fun inverterMeasurementCollector(
-        inverterSensorsRepository: InverterSensorsRepository,
-        inverter: Inverter,
-        measurementRepository: MeasurementRepository,
-        clock: Clock,
-    ): InverterMeasurementCollector {
-        return InverterMeasurementCollector(
-            inverterSensorsRepository,
-            inverter,
-            measurementRepository,
-            clock
-        )
-    }
 
     @Bean
     fun inverterSensorsRepository(

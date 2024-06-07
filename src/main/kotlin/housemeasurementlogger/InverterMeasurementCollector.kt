@@ -3,14 +3,14 @@ package housemeasurementlogger
 import housemeasurementlogger.inverter.Inverter
 import housemeasurementlogger.inverter.InverterSensor
 import housemeasurementlogger.inverter.InverterSensorsRepository
-import housemeasurementlogger.measurements.Measurement
-import housemeasurementlogger.measurements.MeasurementRepository
+import housemeasurementlogger.measurements.NewIncomingMeasurement
 import java.time.Clock
+import org.springframework.context.ApplicationEventPublisher
 
 class InverterMeasurementCollector(
     private val inverterSensorsRepository: InverterSensorsRepository,
     private val inverter: Inverter,
-    private val measurementRepository: MeasurementRepository,
+    private val eventPublisher: ApplicationEventPublisher,
     private val clock: Clock,
 ) {
     suspend fun collect() {
@@ -20,8 +20,8 @@ class InverterMeasurementCollector(
         for (sensor in sensors) {
             when (sensor.type) {
                 InverterSensor.Type.TYPE_DOUBLE -> {
-                    measurementRepository.addMeasurement(
-                        Measurement(
+                    eventPublisher.publishEvent(
+                        NewIncomingMeasurement(
                             sensor.id,
                             sensor.name,
                             clock.instant(),
