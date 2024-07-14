@@ -1,4 +1,4 @@
-FROM openjdk:15-slim-buster as builder-cache
+FROM amazoncorretto:21.0.3 as builder-cache
 RUN mkdir /gradle-user-home
 RUN mkdir /house-measurement-logger
 WORKDIR /house-measurement-logger
@@ -12,7 +12,7 @@ RUN uname -m
 # working with arm64. So we're using vfork
 RUN ./gradlew -Djdk.lang.Process.launchMechanism=vfork clean build -i --stacktrace --no-daemon
 
-FROM openjdk:15-slim-buster as builder
+FROM amazoncorretto:21.0.3 as builder
 RUN mkdir /gradle-user-home
 COPY --from=builder-cache /gradle-user-home/caches /gradle-user-home/caches
 RUN mkdir /house-measurement-logger
@@ -27,8 +27,7 @@ COPY src ./src
 # working with arm64. So we're using vfork
 RUN ./gradlew -Djdk.lang.Process.launchMechanism=vfork clean build -i --stacktrace --no-daemon
 
-FROM openjdk:15-slim-buster
-LABEL org.opencontainers.image.source https://github.com/mhert/house-measurement-logger
+FROM amazoncorretto:21.0.3
+LABEL org.opencontainers.image.source=https://github.com/mhert/house-measurement-logger
 COPY --from=builder /house-measurement-logger/build/libs/house-measurement-logger-1.0-SNAPSHOT.jar /house-measurement-logger.jar
 CMD [ "java", "-jar", "/house-measurement-logger.jar"]
-

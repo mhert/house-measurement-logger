@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val calimero = "3.0-SNAPSHOT"
@@ -73,14 +74,14 @@ spotless {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "21"
+    compilerOptions {
+        freeCompilerArgs = freeCompilerArgs.get() + listOf("-Xjsr305=strict")
+        jvmTarget = JvmTarget.JVM_21
     }
 }
 
 tasks.withType<Test> { useJUnitPlatform() }
 
-group = "me.mhert"
+group = "cx.mh"
 
 version = "1.0-SNAPSHOT"
