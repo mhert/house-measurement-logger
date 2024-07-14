@@ -1,13 +1,37 @@
 # house-measurement-logger
 
-This collects date from a bunch of sensors in my house and stores it in a mongodb. It runs in docker container on a Raspberry Pi 4.
+This application collects date from a bunch of sensors in my house and stores it in a mongodb. It runs in docker container on a Raspberry Pi 4.
 
+## Build
+### Docker image
+```shell
+docker buildx build --no-cache --progress plain --tag `basename $PWD` --file Dockerfile .
+```
+
+### Executable jar
+```shell
+./gradlew -Djdk.lang.Process.launchMechanism=vfork clean build -i --stacktrace
+```
 ## Usage
-The image is available for amd64 and arm64v8 here: https://github.com/users/mhert/packages/container/package/house-measurement-logger
+
+### Own Docker image
+```shell
+docker run `basename $PWD`
 ```
-docker run ghcr.io/mhert/house-measurement-logger:latest
+
+### Hosted Docker image
+```shell
+docker run mhert/house-measurement-logger:latest
 ```
-You can configure it via env vars. To see whats available check the .env.dist
+
+### Executable jar
+```shell
+java -jar build/libs/house_data_logger-1.0-SNAPSHOT.jar
+```
+
+## Configuration
+
+You can control the app via environment variables. To see whats available check the .env.dist
 
 ## Data sources
 For now we have:
