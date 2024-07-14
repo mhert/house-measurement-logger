@@ -3,6 +3,7 @@ package housemeasurementlogger.infrastructure.tasks
 import housemeasurementlogger.KnxMeasurementCollector
 import io.calimero.link.KNXNetworkLink
 import io.calimero.process.ProcessCommunicatorImpl
+import kotlin.system.exitProcess
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
@@ -28,7 +29,7 @@ class CollectKnxDataTask(
             }
 
             if (!knxLink.isOpen) {
-                throw RuntimeException("Lost connection to knx")
+                exitProcess(1)
             }
         }
     }
