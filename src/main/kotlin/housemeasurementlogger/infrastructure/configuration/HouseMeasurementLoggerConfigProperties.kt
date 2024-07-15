@@ -1,11 +1,10 @@
 package housemeasurementlogger.infrastructure.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 
 @ConfigurationProperties(prefix = "house-measurement-logger")
-@EnableConfigurationProperties
 data class HouseMeasurementLoggerConfigProperties(
+    var printMeasurements: String,
     var knxGatewayAddress: String,
     var knxGatewayPort: String,
     var dbType: String,

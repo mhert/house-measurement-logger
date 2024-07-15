@@ -3,6 +3,7 @@ spring:
   application:
     name: "house-measurement-logger"
 house-measurement-logger:
+  printMeasurements: "${PRINT_MEASUREMENTS}"
   knxGatewayAddress: "${KNX_GATEWAY_ADDRESS}"
   knxGatewayPort: "${KNX_GATEWAY_PORT}"
   dbType: "${DB_TYPE}"
