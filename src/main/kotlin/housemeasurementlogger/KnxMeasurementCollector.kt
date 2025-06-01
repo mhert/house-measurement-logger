@@ -51,7 +51,7 @@ class KnxMeasurementCollector(
                 destinationSensor.id,
                 destinationSensor.name,
                 clock.instant(),
-                value
+                value,
             )
         )
     }

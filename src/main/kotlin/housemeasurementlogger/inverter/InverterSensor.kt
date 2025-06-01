@@ -2,12 +2,7 @@ package housemeasurementlogger.inverter
 
 import java.util.*
 
-class InverterSensor(
-    val id: UUID,
-    val name: String,
-    val datasetFieldName: String,
-    val type: Type,
-) {
+class InverterSensor(val id: UUID, val name: String, val datasetFieldName: String, val type: Type) {
     enum class Type(val type: String) {
         TYPE_DOUBLE("DOUBLE");
 

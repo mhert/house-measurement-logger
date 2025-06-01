@@ -11,7 +11,7 @@ class ModBusDeviceMeasurementCollector(
     private val modBusSensorsRepository: ModBusSensorsRepository,
     private val modBusDevice: ModBusDevice,
     private val eventPublisher: ApplicationEventPublisher,
-    private val clock: Clock
+    private val clock: Clock,
 ) {
     fun collect() {
         val sensors = modBusSensorsRepository.allSensors()

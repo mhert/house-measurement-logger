@@ -13,7 +13,7 @@ class FileBasedKnxSensorsRepository(private val sensorsFileName: String) : KnxSe
                 UUID.fromString(id),
                 name,
                 GroupAddress.fromString(address),
-                DPT.fromTypeId(typeId)
+                DPT.fromTypeId(typeId),
             )
         }
     }

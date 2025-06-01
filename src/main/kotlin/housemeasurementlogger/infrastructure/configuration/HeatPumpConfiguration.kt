@@ -13,15 +13,13 @@ class HeatPumpConfiguration {
 
     @Bean
     fun heatPumpSensorsRepository(
-        config: HouseMeasurementLoggerConfigProperties,
+        config: HouseMeasurementLoggerConfigProperties
     ): ModBusSensorsRepository {
         return FileBasedModBusSensorsRepository(config.heatPumpSensorsDescriptionFile)
     }
 
     @Bean
-    fun heatPump(
-        config: HouseMeasurementLoggerConfigProperties,
-    ): ModBusDevice {
+    fun heatPump(config: HouseMeasurementLoggerConfigProperties): ModBusDevice {
         return J2ModModBusDevice(ModbusTCPMaster(config.heatPumpHost))
     }
 }

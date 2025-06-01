@@ -26,7 +26,7 @@ class CollectorsConfiguration {
             heatPumpSensorsRepository,
             heatPump,
             eventPublisher,
-            clock
+            clock,
         )
     }
 
@@ -41,7 +41,7 @@ class CollectorsConfiguration {
             inverterSensorsRepository,
             inverter,
             eventPublisher,
-            clock
+            clock,
         )
     }
 

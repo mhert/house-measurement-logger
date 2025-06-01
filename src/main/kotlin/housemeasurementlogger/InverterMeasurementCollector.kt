@@ -25,7 +25,7 @@ class InverterMeasurementCollector(
                             sensor.id,
                             sensor.name,
                             clock.instant(),
-                            data.getDouble(sensor.datasetFieldName)
+                            data.getDouble(sensor.datasetFieldName),
                         )
                     )
                 }

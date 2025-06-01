@@ -12,15 +12,13 @@ class InverterConfiguration {
 
     @Bean
     fun inverterSensorsRepository(
-        config: HouseMeasurementLoggerConfigProperties,
+        config: HouseMeasurementLoggerConfigProperties
     ): InverterSensorsRepository {
         return FileBasedInverterSensorsRepository(config.inverterSensorsDescriptionFile)
     }
 
     @Bean
-    fun inverter(
-        config: HouseMeasurementLoggerConfigProperties,
-    ): Inverter {
+    fun inverter(config: HouseMeasurementLoggerConfigProperties): Inverter {
         return HttpBasedInverter(config.inverterBaseUrl)
     }
 }

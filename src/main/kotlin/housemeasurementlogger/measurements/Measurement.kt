@@ -7,5 +7,5 @@ data class Measurement(
     val sensorId: UUID,
     val sensorName: String,
     val measurementDate: Instant,
-    val value: Double
+    val value: Double,
 )

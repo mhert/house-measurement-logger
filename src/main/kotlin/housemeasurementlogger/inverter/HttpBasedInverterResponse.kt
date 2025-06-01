@@ -16,11 +16,7 @@ data class HttpBasedInverterResponse(val Body: BodyObject) {
             )
 
             @Serializable
-            data class SiteObject(
-                val P_Grid: Double?,
-                val P_Load: Double?,
-                val P_PV: Double?,
-            )
+            data class SiteObject(val P_Grid: Double?, val P_Load: Double?, val P_PV: Double?)
         }
     }
 }

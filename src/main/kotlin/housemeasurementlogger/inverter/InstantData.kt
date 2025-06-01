@@ -6,7 +6,7 @@ class InstantData(
     producedTotal: Double,
     pvProduction: Double,
     gridConsumption: Double,
-    totalConsumption: Double
+    totalConsumption: Double,
 ) {
     private val dataDouble =
         mapOf(

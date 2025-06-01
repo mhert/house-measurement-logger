@@ -4,9 +4,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
-class StoreNewIncomingMessages(
-    private val measurementRepository: MeasurementRepository,
-) {
+class StoreNewIncomingMessages(private val measurementRepository: MeasurementRepository) {
     @EventListener
     fun invoke(newIncomingMeasurement: NewIncomingMeasurement) {
         measurementRepository.addMeasurement(

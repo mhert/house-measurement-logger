@@ -12,7 +12,7 @@ class FileBasedInverterSensorsRepository(private val sensorsFileName: String) :
                 UUID.fromString(id),
                 name,
                 datasetFieldName,
-                InverterSensor.Type.fromType(type)
+                InverterSensor.Type.fromType(type),
             )
         }
     }
