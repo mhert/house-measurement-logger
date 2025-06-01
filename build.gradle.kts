@@ -3,20 +3,20 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val calimero = "3.0-SNAPSHOT"
 val j2mod = "3.2.1"
-val junitJupiter = "5.6.0"
-val kotlinxCoroutinesReactor = "1.8.1"
-val kotlinxSerializationJson = "1.0.1"
+val junitJupiter = "5.12.1"
+val kotlinxCoroutinesReactor = "1.10.2"
+val kotlinxSerializationJson = "1.8.1"
 val ktor = "1.6.4"
 val pgjdbcNg = "0.8.9"
 
 plugins {
     id("application")
-    id("com.diffplug.spotless") version "6.25.0"
-    id("io.spring.dependency-management") version "1.1.4"
-    id("org.springframework.boot") version "3.3.0"
-    id("org.jetbrains.kotlin.plugin.spring") version "2.0.0"
-    kotlin("jvm") version "1.9.24"
-    kotlin("plugin.serialization") version "1.9.24"
+    id("com.diffplug.spotless") version "7.0.4"
+    id("io.spring.dependency-management") version "1.1.7"
+    id("org.springframework.boot") version "3.5.0"
+    id("org.jetbrains.kotlin.plugin.spring") version "2.2.0-RC"
+    kotlin("jvm") version "2.2.0-RC"
+    kotlin("plugin.serialization") version "2.2.0-RC"
 }
 
 dependencies {
@@ -76,7 +76,7 @@ spotless {
 tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs = freeCompilerArgs.get() + listOf("-Xjsr305=strict")
-        jvmTarget = JvmTarget.JVM_21
+        jvmTarget = JvmTarget.JVM_24
     }
 }
 
