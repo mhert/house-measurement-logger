@@ -1,5 +1,6 @@
 package housemeasurementlogger.infrastructure.configuration
 
+import housemeasurementlogger.knx_sensors.CachingKnxSensorsRepository
 import housemeasurementlogger.knx_sensors.FileBasedKnxSensorsRepository
 import housemeasurementlogger.knx_sensors.KnxSensorsRepository
 import io.calimero.link.KNXNetworkLinkIP
@@ -21,6 +22,8 @@ class KnxConfiguration {
 
     @Bean
     fun knxSensorsRepository(config: HouseMeasurementLoggerConfigProperties): KnxSensorsRepository {
-        return FileBasedKnxSensorsRepository(config.knxSensorsDescriptionFile)
+        return CachingKnxSensorsRepository(
+            FileBasedKnxSensorsRepository(config.knxSensorsDescriptionFile)
+        )
     }
 }
