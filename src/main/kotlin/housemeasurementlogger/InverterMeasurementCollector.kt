@@ -17,17 +17,19 @@ class InverterMeasurementCollector(
         val data = inverter.instantData()
         val sensors = inverterSensorsRepository.allSensors()
 
-        for (sensor in sensors) {
-            when (sensor.type) {
-                InverterSensor.Type.TYPE_DOUBLE -> {
-                    eventPublisher.publishEvent(
-                        NewIncomingMeasurement(
-                            sensor.id,
-                            sensor.name,
-                            clock.instant(),
-                            data.getDouble(sensor.datasetFieldName),
+        data.onSuccess {
+            for (sensor in sensors) {
+                when (sensor.type) {
+                    InverterSensor.Type.TYPE_DOUBLE -> {
+                        eventPublisher.publishEvent(
+                            NewIncomingMeasurement(
+                                sensor.id,
+                                sensor.name,
+                                clock.instant(),
+                                it.getDouble(sensor.datasetFieldName),
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

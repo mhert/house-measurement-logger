@@ -6,6 +6,7 @@ import housemeasurementlogger.inverter.Inverter
 import housemeasurementlogger.inverter.InverterSensorsRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.*
+import io.ktor.client.features.HttpTimeout
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import org.springframework.context.annotation.Bean
@@ -25,6 +26,7 @@ class InverterConfiguration {
     fun inverter(config: HouseMeasurementLoggerConfigProperties): Inverter {
         val client =
             HttpClient(CIO) {
+                install(HttpTimeout)
                 install(JsonFeature) {
                     serializer =
                         KotlinxSerializer(

@@ -1,5 +1,5 @@
 package housemeasurementlogger.inverter
 
 interface Inverter {
-    suspend fun instantData(): InstantData
+    suspend fun instantData(): Result<InstantData>
 }
