@@ -1,6 +1,7 @@
 package housemeasurementlogger.infrastructure.configuration
 
 import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
+import housemeasurementlogger.modbus.CachingModBusSensorsRepository
 import housemeasurementlogger.modbus.FileBasedModBusSensorsRepository
 import housemeasurementlogger.modbus.J2ModModBusDevice
 import housemeasurementlogger.modbus.ModBusDevice
@@ -15,7 +16,9 @@ class HeatPumpConfiguration {
     fun heatPumpSensorsRepository(
         config: HouseMeasurementLoggerConfigProperties
     ): ModBusSensorsRepository {
-        return FileBasedModBusSensorsRepository(config.heatPumpSensorsDescriptionFile)
+        return CachingModBusSensorsRepository(
+            FileBasedModBusSensorsRepository(config.heatPumpSensorsDescriptionFile)
+        )
     }
 
     @Bean

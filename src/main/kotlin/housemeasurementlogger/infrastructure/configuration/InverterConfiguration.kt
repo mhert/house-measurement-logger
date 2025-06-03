@@ -1,5 +1,6 @@
 package housemeasurementlogger.infrastructure.configuration
 
+import housemeasurementlogger.inverter.CachingInverterSensorsRepository
 import housemeasurementlogger.inverter.FileBasedInverterSensorsRepository
 import housemeasurementlogger.inverter.HttpBasedInverter
 import housemeasurementlogger.inverter.Inverter
@@ -19,7 +20,9 @@ class InverterConfiguration {
     fun inverterSensorsRepository(
         config: HouseMeasurementLoggerConfigProperties
     ): InverterSensorsRepository {
-        return FileBasedInverterSensorsRepository(config.inverterSensorsDescriptionFile)
+        return CachingInverterSensorsRepository(
+            FileBasedInverterSensorsRepository(config.inverterSensorsDescriptionFile)
+        )
     }
 
     @Bean
