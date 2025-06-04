@@ -9,7 +9,7 @@ class HttpBasedInverter(private val client: HttpClient, private val inverterBase
     Inverter {
 
     override suspend fun instantData(): Result<InstantData> {
-        try {
+        return try {
             val response: HttpBasedInverterResponse =
                 client.get<HttpBasedInverterResponse> {
                     url("$inverterBaseUrl/solar_api/v1/GetPowerFlowRealtimeData.fcgi")
@@ -23,7 +23,7 @@ class HttpBasedInverter(private val client: HttpClient, private val inverterBase
             val gridConsumption: Double = response.Body.Data.Site.P_Grid ?: 0.0
             val totalConsumption: Double = response.Body.Data.Site.P_Load ?: 0.0
 
-            return Result.success(
+            Result.success(
                 InstantData(
                     producedToday,
                     producedYear,
@@ -34,7 +34,7 @@ class HttpBasedInverter(private val client: HttpClient, private val inverterBase
                 )
             )
         } catch (e: HttpRequestTimeoutException) {
-            return Result.failure(e)
+            Result.failure(e)
         }
     }
 }

@@ -1,5 +1,5 @@
 package housemeasurementlogger.modbus
 
 interface ModBusDevice {
-    fun getDoubleDataForSensor(sensor: ModBusDeviceSensor): Double
+    fun getDoubleDataForSensor(sensor: ModBusDeviceSensor): Result<Double>
 }

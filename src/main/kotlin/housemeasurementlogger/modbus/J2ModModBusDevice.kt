@@ -4,8 +4,10 @@ import com.ghgande.j2mod.modbus.facade.ModbusTCPMaster
 import java.nio.ByteBuffer
 
 class J2ModModBusDevice(private val modbus: ModbusTCPMaster) : ModBusDevice {
-    override fun getDoubleDataForSensor(sensor: ModBusDeviceSensor): Double {
-        return readFloatRegister(sensor.unit, sensor.register, sensor.length).toDouble()
+    override fun getDoubleDataForSensor(sensor: ModBusDeviceSensor): Result<Double> {
+        return Result.success(
+            readFloatRegister(sensor.unit, sensor.register, sensor.length).toDouble()
+        )
     }
 
     private fun readFloatRegister(unitId: Int, ref: Int, count: Int): Float {

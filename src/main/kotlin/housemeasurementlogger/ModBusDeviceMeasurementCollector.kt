@@ -21,9 +21,11 @@ class ModBusDeviceMeasurementCollector(
                 ModBusDeviceSensor.Type.TYPE_DOUBLE -> {
                     val data = modBusDevice.getDoubleDataForSensor(sensor)
 
-                    eventPublisher.publishEvent(
-                        NewIncomingMeasurement(sensor.id, sensor.name, clock.instant(), data)
-                    )
+                    data.onSuccess {
+                        eventPublisher.publishEvent(
+                            NewIncomingMeasurement(sensor.id, sensor.name, clock.instant(), it)
+                        )
+                    }
                 }
             }
         }
