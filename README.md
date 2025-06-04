@@ -26,7 +26,7 @@ docker run mhert/house-measurement-logger:latest
 
 ### Executable jar
 ```shell
-java -jar build/libs/house_data_logger-1.0-SNAPSHOT.jar
+java -jar build/libs/house-measurement-logger-1.0-SNAPSHOT.jar
 ```
 
 ## Configuration

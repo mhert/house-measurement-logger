@@ -1,1 +1,1 @@
-rootProject.name = "house_data_logger"
+rootProject.name = "house-measurement-logger"
