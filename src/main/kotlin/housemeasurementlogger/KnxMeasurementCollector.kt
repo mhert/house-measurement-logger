@@ -18,7 +18,6 @@ class KnxMeasurementCollector(
     private val eventPublisher: ApplicationEventPublisher,
     private val clock: Clock,
 ) : ProcessListener {
-
     override fun groupWrite(e: ProcessEvent?) {
         val destination = GroupAddress.fromString(e?.destination.toString())
 
